@@ -1,0 +1,3 @@
+# Keep upstream catalogue snapshots byte-for-byte for provenance hash checks.
+vendor/*.agf -text -diff
+vendor/*.zip -text -diff
