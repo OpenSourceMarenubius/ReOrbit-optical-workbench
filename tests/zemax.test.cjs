@@ -2,7 +2,7 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const Z=require('../zemax.js'),O=require('../engine.js');
-const text=fs.readFileSync(__dirname+'/fixtures/demo-singlet.zmx','utf8');
+const text=fs.readFileSync(__dirname+'/fixtures/demo-singlet.zmx','utf8').replace(/\r\n?/g,'\n');
 const parse=s=>Z.parse(s,'demo-singlet.zmx');
 const project=()=>({name:'Existing design',wavelength:1550,pupil:10,field:1,imageDistance:77,emission:{mode:'point',distance:120,halfAngle:4},surfaces:[{radius:52,thickness:5,material:'N-BK7',diameter:25},{radius:-52,thickness:0,material:'AIR',diameter:25}]});
 const near=(a,b,t=1e-8)=>assert.ok(Math.abs(a-b)<t,`${a} != ${b}`);
@@ -61,4 +61,8 @@ test('invalid insertions leave the original untouched, including inside glass an
 test('surface capacity is enforced and imported provenance round-trips in project JSON',()=>{
   const p=project(),r=parse(text);while(p.surfaces.length<24)p.surfaces.push(...structuredClone(project().surfaces));p.surfaces.forEach((s,i)=>{if(i<p.surfaces.length-1&&s.thickness===0)s.thickness=20;});assert.throws(()=>Z.insert(p,r,24),/24/);
   const next=Z.insert(project(),r,2),loaded=JSON.parse(JSON.stringify(next));O.validate(loaded);assert.deepEqual(loaded,next);
+});
+
+test('text import accepts both Unix and Windows line endings',()=>{
+  for(const input of [text,text.replace(/\n/g,'\r\n')]){const result=parse(input);assert.equal(result.canImport,true);assert.equal(result.surfaces.length,2);}
 });

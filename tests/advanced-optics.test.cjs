@@ -4,7 +4,7 @@ const O=require('../engine.js'),Z=require('../zemax.js'),fs=require('node:fs');
 const near=(a,b,t=1e-7)=>assert.ok(Math.abs(a-b)<t,`${a} != ${b}`);
 const singlet=()=>({wavelength:587.6,pupil:12,field:0,imageDistance:55,surfaces:[{radius:30,thickness:8,material:'N-BK7',diameter:20},{radius:0,thickness:0,material:'AIR',diameter:20}]});
 const wedge=()=>({...singlet(),surfaces:[{type:'prism',radius:0,tilt:-10,thickness:8,material:'N-BK7',diameter:20},{type:'prism',radius:0,tilt:10,thickness:0,material:'AIR',diameter:20}]});
-const sample=fs.readFileSync(__dirname+'/fixtures/demo-singlet.zmx','utf8');
+const sample=fs.readFileSync(__dirname+'/fixtures/demo-singlet.zmx','utf8').replace(/\r\n?/g,'\n');
 const asphericText=sample.replace('  TYPE STANDARD\n  COMM "Front surface"','  TYPE EVENASPH\n  COMM "Front surface"').replace('  CONI 0','  CONI -1\n  PARM 1 1e-4\n  PARM 2 2e-7\n  PARM 8 1e-22');
 test('paraboloid and polynomial sag and slope agree with independent formulas',()=>{
   const s={type:'asphere',radius:30,conic:-1,coefficients:[.001,2e-5],diameter:20};
