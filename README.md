@@ -38,6 +38,16 @@ For point sources, the layout aims its 11 rays at equally spaced heights on the 
 
 ## Insert supplier lens (.zmx)
 
+### Implementation provenance and public references
+
+ReOrbit's ZMX importer was created using publicly available technical information, including the open-source **ray-optics** project's ZMX reader and its documentation as references for record conventions and text encoding. Credit goes to **Michael J. Hayford and the ray-optics contributors** for making that implementation available. ReOrbit supplies its own bounded JavaScript parser in [zemax.js](zemax.js); ray-optics is not a runtime dependency.
+
+The reference material also includes Ansys's published documentation for file types, even-asphere parameters and mirror thickness conventions. Published vendor documentation is distinct from open-source software: citing it does not make the Zemax format, OpticStudio software, supplier prescriptions or vendor documentation MIT-licensed. ReOrbit does not bundle an OpticStudio SDK or proprietary runtime, and this project does not imply endorsement by Ansys, Zemax or ray-optics.
+
+See [ZMX importer documentation and source credits](docs/ZMX_IMPORTER.md) for linked references, record mappings, supported and rejected features, validation coverage and a practical import checklist. The parser's implemented subset and tests define its current compatibility; the references are not a claim of complete Zemax support.
+
+### Import workflow and compatibility
+
 Select **Insert supplier lens** beside **Add surface**, then choose a local Zemax text `.zmx` file. The preview shows physical surfaces in mm and lists unsupported records and model limitations. No prescription changes occur until **Insert lens into prescription** is selected. Choose before the first surface, after the final surface, or an interior AIR gap; insertion inside glass is blocked. Specify the external air gaps. Interior insertion replaces that old air gap and shifts downstream surfaces; internal supplier thicknesses are kept. Appending retains the existing image distance measured from the new final vertex. Prepending retains source distance measured from the new first vertex. Wavelength, direction, emission model and project name remain as configured.
 
 Supported files use UTF-8 or UTF-16 (LE/BE), sequential STANDARD spherical/plane/conic or EVENASPH surfaces, circular centred clear apertures, AIR or exact supported catalogue glasses, and explicit MM/CM/M/IN units. ZMX CURV is reciprocal radius in source units; DIAM is a clear semi-diameter, so both are converted for ReOrbit. CONI is the dimensionless conic constant. EVENASPH PARM 1–8 map to A2–A16; each coefficient is converted with scale^(1−order), not a single common length scale. Higher parameter numbers, duplicate parameter records and other asphere families are rejected. Complete files must include object SURF 0 and a final planar image surface; these two surfaces and their external distances are excluded. Source-file name, title, source surface number and comments are retained in each inserted surface's JSON metadata. Imported values remain editable. `GLAS MIRROR` imports ideal reflective surfaces; signed Zemax distances and subsequent radii/asphere coefficients are converted to positive path spacing and local incoming coordinates. Coordinate breaks remain unsupported.
