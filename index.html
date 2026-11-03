@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ReOrbit Optics — optical workbench</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<aside class="sidebar">
+  <a class="brand" href="#"><span class="orbit">↗</span><span>reorbit<span class="brand-small">OPTICAL WORKBENCH</span></span></a>
+  <div class="workspace-label">YOUR WORKSPACE <span>01</span></div>
+  <div class="nav-item active"><span>◎</span> Lens studio <span class="tiny">α</span></div>
+  <div class="side-note">A little less friction.<br>A little more discovery.</div>
+  <div class="project-card"><span class="status-dot"></span> LOCAL PROJECT<strong id="side-title">The everyday singlet</strong><small>Stored in this browser when available</small></div>
+  <div class="sidebar-bottom"><span class="recycle">♲</span><p>Good optics.<br>Another orbit.</p><small>REORBIT / v0.1 · GEOMETRIC OPTICS</small></div>
+</aside>
+<main>
+  <header><div class="breadcrumbs">ReOrbit <span>/</span> Lens studio</div><div class="header-actions"><span class="local-pill"><i></i> Runs on your machine</span><button id="import">Open JSON</button><button id="export" class="dark">Save project ↗</button><input type="file" id="file" accept="application/json,.json" hidden></div></header>
+  <section class="intro"><div><div class="eyebrow">RECYCLE IDEAS. EXPLORE NEW WORLDS.</div><h1>Your next bright idea.</h1><p>A clear path from a lens prescription to a real ray trace.</p></div><span class="edition">MISSION 001<br><b>Lens studio</b></span></section>
+  <section class="project-bar"><div><span class="project-symbol">◉</span><input id="name" aria-label="Project name" maxlength="80" value="The everyday singlet"><span class="badge">SEQUENTIAL</span></div><label>Start with <select id="preset"><option value="singlet">Biconvex singlet</option><option value="plano">Plano-convex lens</option><option value="expander">Galilean concept · 1550 nm</option></select></label></section>
+  <div class="studio-grid">
+    <section class="panel layout-panel"><div class="panel-heading"><div><span class="section-number">01</span><h2>Follow the light</h2></div><span class="panel-meta">MERIDIONAL VIEW · mm</span></div><div class="plot-wrap"><canvas id="layout" aria-label="Optical layout with traced meridional rays"></canvas><div class="plot-label"><span class="line-key"></span> Sequential geometric ray trace <span class="blue-key"></span> Image plane</div></div><div class="layout-footer"><span id="layout-caption">Collimated input → lens → image</span><button id="beam-report" class="text-button">Beam diagnostics ↗</button></div></section>
+    <section class="panel setup-panel"><div class="panel-heading"><div><span class="section-number">02</span><h2>Set the scene</h2></div><span class="sun-icon">✳</span></div><div class="settings"><label>Wavelength <span>nm</span><input id="wavelength" type="number" min="380" max="1700" step="any" value="587.6"></label><div class="wave-chips"><button data-wave="486.1">486</button><button data-wave="587.6">588</button><button data-wave="1550">1550 / IR</button></div><div class="two-controls"><label>Input beam Ø <span>mm</span><input id="pupil" type="number" min="0.01" max="500" step="0.5" value="20"></label><label>Emission direction <span>deg</span><input id="field" type="number" min="-15" max="15" step="0.1" value="0"></label></div><label>Image distance along outgoing axis <span>mm</span><input id="imageDistance" type="number" min="0.001" max="10000" step="0.1" value="48"></label><button id="focus" class="focus-button">◎ Find best focus <span>↗</span></button><p class="control-note" id="input-note">Collimated input. Beam diameter is defined at the first vertex plane.</p></div></section>
+    <section class="panel prescription-panel"><div class="panel-heading"><div><span class="section-number">03</span><h2>Shape your optics</h2></div><div class="prescription-actions"><button id="emission" class="text-button">☀ Emission</button><button id="supplier" class="text-button">↥ Insert supplier lens</button><button id="add-optic" class="text-button">◇ Add optic</button><button id="add" class="text-button">+ Add surface</button></div></div><div class="emission-summary" id="emission-summary"></div><div class="table-scroll"><table><thead><tr><th><span class="sr-only">Focal group selection</span></th><th>SURFACE</th><th>RADIUS <small>mm</small></th><th>TO NEXT <small>mm</small></th><th>MEDIUM AFTER</th><th>CLEAR Ø <small>mm</small></th><th>SURFACE BFD <small>mm</small></th><th></th></tr></thead><tbody id="surfaces"></tbody></table></div><div class="table-note">Spacing follows the outgoing axis. +R: centre along the incoming axis. Radius 0: plane. Image distance is set separately.</div></section>
+    <section class="panel spot-panel"><div class="panel-heading"><div><span class="section-number">04</span><h2>Inspect the landing</h2></div><span class="panel-meta">SPOT DIAGRAM</span></div><canvas id="spot" aria-label="Spot diagram centred on ray centroid"></canvas><div class="spot-caption"><span id="sample-caption">401 pupil samples · one wavelength</span><span id="spot-scale"></span></div></section>
+    <section class="panel focal-panel" aria-labelledby="focal-title"><div class="panel-heading"><div><span class="section-number">↔</span><h2 id="focal-title">Explore focal lengths</h2></div><div><button id="select-all-focal" class="text-button">Select all</button><button id="clear-focal" class="text-button">Clear</button></div></div><p id="focal-range" class="focal-range"></p><div class="focal-edit-controls"><label>Adjust radius of <select id="focal-adjust-surface" aria-label="Surface radius to adjust for group focal target" disabled></select></label><span>Enter a focal target below; press Enter or leave the field to apply. Other radii and spacings stay fixed.</span></div><div class="focal-values"><div><span>GROUP EFL · mm</span><input id="group-efl" class="group-focal-input" type="text" inputmode="decimal" aria-label="Group effective focal length" disabled placeholder="—"><small>From the rear principal plane</small></div><div><span>BACK FOCAL DISTANCE · mm</span><input id="group-bfl" class="group-focal-input" type="text" inputmode="decimal" aria-label="Group back focal distance" disabled placeholder="—"><small>From the last selected surface</small></div><div><span>FRONT FOCUS POSITION · mm</span><input id="group-ffl" class="group-focal-input" type="text" inputmode="decimal" aria-label="Group front focus position" disabled placeholder="—"><small>From the first selected surface</small></div></div><button id="fill-focal-range" class="text-button" hidden>Include intervening surfaces</button><p id="focal-solve-status" class="control-note" role="status" aria-live="polite"></p><p id="focal-note" class="control-note"></p><p class="control-note">Surface BFD is the focal distance of one interface alone, using the media before and after it. Edit its value to solve that surface’s radius. Enter ∞ or infinity for zero power. A complete lens needs all of its faces selected. ∞ means zero paraxial power; negative BFD means a virtual focus. Calculated at the current wavelength, independent of source distance. Tilted refracting faces have no single centred focal length here.</p></section><section class="metrics"><div class="metric"><span>RMS SPOT RADIUS</span><strong id="rms">—</strong><small>About the ray centroid</small></div><div class="metric"><span>PARAXIAL EFL</span><strong id="efl">—</strong><small>Effective focal length in air</small></div><div class="metric"><span>RAYS REACHING IMAGE</span><strong id="throughput">—</strong><small>Geometric samples · not power</small></div></section>
+  </div>
+  <div class="message-row"><div id="message" role="status" aria-live="polite"></div><button id="undo-supplier" class="text-button" hidden>↶ Undo insertion</button></div>
+  <footer><span><b>Small steps. Bigger orbits.</b> Built to make optical ideas approachable.</span><button id="about">Model & limitations ↗</button></footer>
+</main>
+<dialog id="model"><div class="dialog-heading"><span class="eyebrow">UNDER THE HOOD</span><button id="close-model" aria-label="Close model details">×</button></div><h2>A workbench with honest boundaries.</h2><p>ReOrbit v0.1 traces 3D rays through spherical, conic/even-aspheric, and tilted planar refractive surfaces using vector Snell refraction. Spot diagrams use 401 uniform-area pupil samples for collimated input, or uniform-solid-angle samples for a finite point source, at one wavelength. Layout rays are a separate meridional sample.</p><p>Best focus minimises centroid-referenced geometric RMS radius for the surviving sampled rays. It is not a general lens optimiser. Image distance is measured from the last surface vertex. “To next” is ignored on the final row.</p><p>The searchable glass catalogue uses SCHOTT Sellmeier coefficients. AIR is fixed at n = 1. Wavelengths are limited to 380–1700 nm. No absorption, coatings, Fresnel power, polarisation, diffraction, wavefront/MTF, thermal effects, extended emitters, mechanical tolerances, or non-sequential paths are modelled.</p><p>This is an early engineering prototype. Cross-check prescriptions against an independent optical tool and physical measurements before fabrication. Example prescriptions are illustrative, not qualified optical assemblies.</p><p><a href="https://media.schott.com/api/public/content/41e799d0bf874807a0bb8e702fbb75b5?v=54856406" target="_blank" rel="noreferrer">SCHOTT N-BK7 data ↗</a> · <a href="https://www.pbr-book.org/3ed-2018/Reflection_Models/Specular_Reflection_and_Transmission" target="_blank" rel="noreferrer">Snell refraction reference ↗</a></p><p>Projects are saved in browser storage when available; export JSON for a durable copy. No account, runtime dependencies, or network requests are required.</p></dialog>
+<dialog id="emission-dialog" aria-labelledby="emission-title">
+  <div class="dialog-heading"><span class="eyebrow">LIGHT SOURCE</span><button id="close-emission" aria-label="Close emission controls">×</button></div>
+  <h2 id="emission-title">Control the light.</h2>
+  <div class="settings emission-settings">
+    <label>Emission model<select id="source-mode"><option value="collimated">Collimated beam · parallel rays</option><option value="point">Point source · finite distance</option></select></label>
+    <div class="two-controls"><label>Source distance to first vertex <span>mm</span><input id="source-distance" type="number" min="0.001" max="10000" step="any" value="100"></label><label>Wavelength <span>nm</span><input id="source-wavelength" type="number" min="380" max="1700" step="any" value="587.6"></label></div>
+    <div class="two-controls"><label>Emission direction <span>deg</span><input id="source-angle" type="number" min="-15" max="15" step="any" value="0"></label><label>Emission cone half-angle <span>deg</span><input id="source-cone" type="number" min="0.001" max="60" step="any" value="5"></label></div>
+    <button id="fill-lens" class="focus-button">◎ Fill first lens <span>↗</span></button>
+    <p id="source-note" class="control-note"></p>
+    <p class="control-note">Fill first lens centres the emission direction and adjusts the cone to reach both aperture edges. Layout rays are spaced evenly across the illuminated part of the first lens; spot calculations retain uniform angular sampling.</p>
+    <p class="control-note">Direction 0° points along the optical axis; positive angles tilt upward in the layout. A 5° half-angle produces a 10° full cone. Changes update the trace immediately.</p>
+    <div id="emission-error" role="status" aria-live="polite"></div>
+  </div>
+</dialog>
+<dialog id="supplier-dialog" aria-labelledby="supplier-heading">
+  <div class="dialog-heading"><span class="eyebrow">SUPPLIER OPTICS / ZEMAX TEXT</span><button id="close-supplier" aria-label="Close supplier lens import">×</button></div>
+  <h2 id="supplier-heading">Insert a real lens.</h2>
+  <p>Open a supplier’s <b>.zmx text lens file</b> to review its prescription before inserting it. Centred STANDARD conic/spherical/plane and EVENASPH surfaces, including ideal MIRROR records, are accepted with supported catalogue glasses.</p>
+  <div class="supplier-file-picker"><button id="choose-supplier">Choose .zmx file ↗</button><span id="supplier-file-name">No file selected</span><input type="file" id="supplier-file" accept=".zmx" hidden></div>
+  <div id="supplier-preview" hidden>
+    <h3 id="supplier-title"></h3><p id="supplier-summary"></p>
+    <div class="table-scroll supplier-table"><table><thead><tr><th>ZMX SURFACE</th><th>RADIUS / mm</th><th>TO NEXT / mm</th><th>MEDIUM AFTER</th><th>CLEAR Ø / mm</th></tr></thead><tbody id="supplier-rows"></tbody></table></div>
+    <ul id="supplier-errors" class="import-errors" role="status" aria-live="polite"></ul>
+    <ul id="supplier-warnings" class="import-warnings"></ul>
+  </div>
+  <div class="settings supplier-settings">
+    <label>Insert location<select id="supplier-position"></select></label>
+    <div class="two-controls"><label>Air gap before <span>mm</span><input id="supplier-before" type="number" min="0.001" max="10000" step="any" value="10"></label><label>Air gap after <span>mm</span><input id="supplier-after" type="number" min="0.001" max="10000" step="any" value="10"></label></div>
+    <p class="control-note">Internal supplier thicknesses are retained. At an interior insertion point, these air gaps replace the old gap and move downstream surfaces. Source and image-distance settings stay as configured. The final preview row’s “to next” is set by the air gap after, when applicable.</p>
+    <p id="supplier-insert-error" class="import-errors" role="status" aria-live="polite"></p>
+    <button id="insert-supplier-confirm" class="dark" disabled>Insert lens into prescription ↗</button>
+  </div>
+</dialog>
+<dialog id="shape-dialog" aria-labelledby="shape-title">
+  <div class="dialog-heading"><span class="eyebrow">SURFACE GEOMETRY</span><button id="close-shape" aria-label="Close surface shape editor">×</button></div>
+  <h2 id="shape-title">Surface shape</h2>
+  <div class="settings emission-settings">
+    <label>Surface action<select id="shape-interaction"><option value="refract">Refract into the next medium</option><option value="reflect">Mirror · ideal specular reflection</option></select></label>
+    <label>Surface model<select id="shape-type"><option value="standard">Spherical / plane</option><option value="asphere">Conic + even asphere</option><option value="prism">Tilted plane / prism face</option></select></label>
+    <p class="control-note">Mirror faces retain the incoming medium. A negative radius is concave toward the incoming axis. The next surface and image plane follow the nominal reflected axis; spacings stay positive along that path.</p>
+    <div id="shape-asphere">
+      <label>Conic constant k<input id="shape-conic" type="number" step="any" value="0"></label>
+      <p class="control-note">k = 0: sphere · k = −1: paraboloid. Sag is the base conic plus A2·r² + A4·r⁴ + … + A16·r¹⁶. Radius stays in the prescription table.</p>
+      <div class="coefficient-grid">
+        <label>A2 <span>mm⁻¹</span><input id="shape-a2" type="number" step="any" value="0"></label>
+        <label>A4 <span>mm⁻³</span><input id="shape-a4" type="number" step="any" value="0"></label>
+        <label>A6 <span>mm⁻⁵</span><input id="shape-a6" type="number" step="any" value="0"></label>
+        <label>A8 <span>mm⁻⁷</span><input id="shape-a8" type="number" step="any" value="0"></label>
+        <label>A10 <span>mm⁻⁹</span><input id="shape-a10" type="number" step="any" value="0"></label>
+        <label>A12 <span>mm⁻¹¹</span><input id="shape-a12" type="number" step="any" value="0"></label>
+        <label>A14 <span>mm⁻¹³</span><input id="shape-a14" type="number" step="any" value="0"></label>
+        <label>A16 <span>mm⁻¹⁵</span><input id="shape-a16" type="number" step="any" value="0"></label>
+      </div>
+    </div>
+    <div id="shape-prism" hidden><label>Face tilt <span>deg</span><input id="shape-tilt" type="number" min="-60" max="60" step="any" value="0"></label><p class="control-note">Positive tilt slopes the face toward +z at positive transverse height: z = vertex + tan(tilt)·x. Radius is set to 0. Clear diameter is projected onto the transverse plane. Side walls and automatic internal-reflection paths are not traced. Explicit mirror surfaces reflect along the prescribed sequence.</p></div>
+    <p id="shape-error" class="import-errors" role="status" aria-live="polite"></p>
+    <button id="apply-shape" class="dark">Apply surface shape ↗</button>
+  </div>
+</dialog>
+<dialog id="optic-dialog" aria-labelledby="optic-title">
+  <div class="dialog-heading"><span class="eyebrow">ADD AN OPTICAL ELEMENT</span><button id="close-optic" aria-label="Close add optic">×</button></div>
+  <h2 id="optic-title">A new way to bend light.</h2>
+  <div class="settings emission-settings">
+    <label>Optic<select id="optic-kind"><option value="prism">Refracting wedge prism</option><option value="asphere">Plano-aspheric lens</option><option value="mirror">Mirror · plane, spherical or conic</option></select></label>
+    <label class="optic-glass-label" id="optic-glass-label">Optical glass<button id="optic-glass" class="material-button">N-BK7 · Search glass ⌕</button></label>
+    <div class="two-controls"><label>Projected clear diameter <span>mm</span><input id="optic-diameter" type="number" min="0.001" max="500" step="any" value="20"></label><label id="optic-thickness-label">Centre thickness <span>mm</span><input id="optic-thickness" type="number" min="0.001" max="10000" step="any" value="8"></label></div>
+    <div id="optic-mirror" hidden><label>Mirror profile<select id="mirror-profile"><option value="plane">Plane folding mirror</option><option value="sphere">Spherical mirror</option><option value="asphere">Conic / aspheric mirror</option></select></label><label id="mirror-tilt-label">Plane face tilt <span>deg</span><input id="mirror-tilt" type="number" min="-60" max="60" step="any" value="45"></label><label id="mirror-radius-label" hidden>Mirror vertex radius <span>mm</span><input id="mirror-radius" type="number" step="any" value="-100"></label><label id="mirror-conic-label" hidden>Mirror conic constant k<input id="mirror-conic" type="number" step="any" value="-1"></label><p class="control-note">A 45° plane face folds the nominal beam by 90°. Negative radius creates a concave mirror. Edit A2–A16 using the surface shape editor. Mirrors have ideal reflection; coating losses, back-surface ghosts, obstructions and substrate thickness are not modelled.</p></div>
+    <div id="optic-prism"><label>Prism apex / wedge angle <span>deg</span><input id="optic-apex" type="number" min="0.001" max="60" step="any" value="20"></label><p class="control-note">Adds two selected-glass/AIR refracting faces tilted by ± half the wedge angle. Increase centre thickness if the faces cross at an edge. TIR is reported and terminates a ray; reflected prism paths are not modelled.</p></div>
+    <div id="optic-asphere" hidden><div class="two-controls"><label>Front vertex radius <span>mm</span><input id="optic-radius" type="number" step="any" value="30"></label><label>Front conic constant k<input id="optic-conic" type="number" step="any" value="-1"></label></div><label>Front A4 coefficient <span>mm⁻³</span><input id="optic-a4" type="number" step="any" value="0"></label><p class="control-note">Adds a conic/even-aspheric front surface with a plane exit. Edit A2–A16 and either face using the surface shape buttons. This is an illustrative starting geometry, not an optimised commercial lens.</p></div>
+    <label>Air gap after current final surface <span>mm</span><input id="optic-gap" type="number" min="0.001" max="10000" step="any" value="10"></label>
+    <p class="control-note">Appends the optic’s surfaces (one for a mirror). Source settings and image distance remain as configured. Image distance is measured along the final outgoing axis. Undo insertion is available until another edit.</p>
+    <p id="optic-error" class="import-errors" role="status" aria-live="polite"></p>
+    <button id="insert-optic" class="dark">Add optic to prescription ↗</button>
+  </div>
+</dialog>
+<dialog id="glass-dialog" aria-labelledby="glass-title">
+  <div class="dialog-heading"><span class="eyebrow">OPTICAL MATERIALS / SCHOTT</span><button id="close-glass" aria-label="Close glass search">×</button></div>
+  <h2 id="glass-title">Find your glass.</h2>
+  <p id="glass-target-note"></p>
+  <label class="glass-search-label" for="glass-search">Search glass name, manufacturer or description</label>
+  <input id="glass-search" type="search" placeholder="Try BK7, SF11, SCHOTT…" autocomplete="off">
+  <div id="glass-count" aria-live="polite"></div>
+  <div class="table-scroll glass-table"><table><thead><tr><th>MATERIAL</th><th>n AT <span id="glass-wave"></span></th><th>n<sub>d</sub> / V<sub>d</sub></th><th>DISPERSION RANGE</th><th></th></tr></thead><tbody id="glass-results"></tbody></table></div>
+  <p id="glass-empty" hidden>No matching glass. Try a shorter name or a catalogue designation.</p>
+  <button id="glass-more" class="text-button">Show more results ↓</button>
+  <p id="glass-error" class="import-errors" role="status" aria-live="polite"></p>
+  <p class="control-note">Refractive index uses the selected glass’s dispersion curve. Outside-range entries cannot be selected at the current wavelength. Transmission, coatings and temperature effects are not simulated. Catalogue entries include legacy grades; this is not a stock-availability list.</p>
+  <a class="glass-source" href="https://media.schott.com/api/public/content/a79c07aa61da4c05a2c0bbab93d09a7f?download=true&amp;v=3b65e351" target="_blank" rel="noreferrer">SCHOTT catalogue source ↗</a>
+</dialog>
+<dialog id="beam-report-dialog" aria-labelledby="beam-report-title">
+  <div class="dialog-heading"><span class="eyebrow">GEOMETRIC BEAM DIAGNOSTICS</span><button id="close-beam-report" aria-label="Close beam diagnostics">×</button></div>
+  <h2 id="beam-report-title">What the rays can tell us.</h2>
+  <div class="table-scroll"><table><tbody id="beam-report-rows"></tbody></table></div>
+  <p id="beam-report-error" class="import-errors" role="status"></p>
+  <p>These values can reveal clipping, residual geometric divergence and the effects of changing source/lens spacing, glass or mirror folds.</p>
+  <p>Angular RMS is measured about the mean ray direction. The envelope diameter is a sampled geometric boundary, not a Gaussian 1/e² beam diameter. Ray survival is not optical power transmission.</p>
+  <p>Real transmitter predictions still need emitter size and fast/slow-axis profiles, M², collimator and lens prescriptions, coating transmission, and measurements. The current model does not calculate diffraction, electrical drive, emitted power, BER or atmospheric link range.</p>
+</dialog>
+<script src="glass-data.js"></script><script src="glasses.js"></script><script src="engine.js"></script><script src="zemax.js"></script><script src="app.js"></script>
+</body></html>

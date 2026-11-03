@@ -1,0 +1,17 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const O=require('../engine.js');
+const near=(a,b,tol=1e-8)=>assert.ok(Math.abs(a-b)<tol,`${a} differs from ${b}`);
+const lens=()=>({wavelength:587.6,pupil:20,field:0,imageDistance:48,surfaces:[{radius:52,thickness:5,material:'N-BK7',diameter:25},{radius:-52,thickness:0,material:'AIR',diameter:25}]});
+test('SCHOTT tabulated N-BK7 index and normal dispersion',()=>{near(O.index('N-BK7',587.6),1.5168,1e-5);near(O.index('N-BK7',1529.6),1.50091,1e-5);assert.ok(O.index('N-BK7',486.1)>O.index('N-BK7',656.3));});
+test('Snell refraction conserves n sin(theta), including glass exit',()=>{for(const [n1,n2] of [[1,1.5],[1.5,1]]){const a=.3,d=O.refract([Math.cos(a),Math.sin(a),0],[-1,0,0],n1,n2);near(n1*Math.sin(a),n2*d[1]);near(Math.hypot(...d),1);}});
+test('total internal reflection is rejected',()=>assert.equal(O.refract([.5,Math.sqrt(.75),0],[-1,0,0],1.5,1),null));
+test('sphere intersection selects the vertex hemisphere, for both signs',()=>{near(O.intersect([-10,2,0],[1,0,0],{z:0,radius:50})[0],O.sag(50,2));near(O.intersect([-10,2,0],[1,0,0],{z:0,radius:-50})[0],O.sag(-50,2));});
+test('plane-parallel plate exits parallel with analytic lateral offset',()=>{const p=lens();p.field=10;p.surfaces=[{radius:0,thickness:5,diameter:25,material:'N-BK7'},{radius:0,thickness:0,diameter:25,material:'AIR'}];const ray=O.trace(p,0,0);assert.equal(ray.status,'ok');const a=10*Math.PI/180;near(ray.direction[1]/ray.direction[0],Math.tan(a));near(ray.origin[1],5*Math.tan(Math.asin(Math.sin(a)/O.index('N-BK7',p.wavelength))));});
+test('paraxial EFL agrees with the thick lensmaker equation',()=>{const p=lens(),n=O.index('N-BK7',p.wavelength),R1=52,R2=-52,t=5;const expected=1/((n-1)*(1/R1-1/R2+(n-1)*t/(n*R1*R2)));near(O.paraxial(p),expected,1e-6);});
+test('best focus reduces RMS and is a local minimum',()=>{const p=lens(),initial=O.bundle(p).rms;p.imageDistance=O.bestFocus(p);const best=O.bundle(p).rms;assert.ok(best<initial);assert.ok(O.bundle({...p,imageDistance:p.imageDistance+.1}).rms>best);assert.ok(O.bundle({...p,imageDistance:p.imageDistance-.1}).rms>best);assert.ok(p.imageDistance>40 && p.imageDistance<55);});
+test('on-axis bundle is symmetric and spot centroid is near axis',()=>{const r=O.bundle(lens());assert.equal(r.valid.length,401);assert.ok(Math.hypot(...r.centroid)<.001);});
+test('clipping is reported and excluded from spot metrics',()=>{const p=lens();p.pupil=40;const r=O.bundle(p);assert.ok(r.valid.length>0 && r.valid.length<401);assert.ok(r.rays.some(r=>r.status==='clipped'));});
+test('invalid and overlapping prescriptions are rejected',()=>{assert.throws(()=>O.bundle({...lens(),wavelength:0}));assert.throws(()=>O.bundle({...lens(),pupil:NaN}));const p=lens();p.surfaces[0].thickness=.1;assert.throws(()=>O.validate(p),/cross/);p.surfaces[0].radius=1;assert.throws(()=>O.validate(p),/radius/);});
+test('afocal plane plate has no finite focus',()=>{const p=lens();p.surfaces.forEach(s=>s.radius=0);assert.equal(O.paraxial(p),null);assert.throws(()=>O.bestFocus(p),/collimated/);});
+test('off-axis best focus remains a centroid-referenced minimum',()=>{const p=lens();p.field=2;p.imageDistance=O.bestFocus(p);const r=O.bundle(p);assert.ok(r.centroid[0]>1);assert.ok(O.bundle({...p,imageDistance:p.imageDistance+.1}).rms>r.rms);assert.ok(O.bundle({...p,imageDistance:p.imageDistance-.1}).rms>r.rms);});

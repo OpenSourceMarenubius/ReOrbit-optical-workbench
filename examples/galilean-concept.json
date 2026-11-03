@@ -1,0 +1,39 @@
+{
+  "format": "reorbit-optics",
+  "version": 1,
+  "name": "Illustrative Galilean stage - 1550 nm",
+  "wavelength": 1550,
+  "pupil": 2.5,
+  "field": 0,
+  "imageDistance": 100,
+  "surfaces": [
+    {
+      "radius": -16,
+      "thickness": 3,
+      "material": "N-BK7",
+      "diameter": 10
+    },
+    {
+      "radius": 16,
+      "thickness": 132,
+      "material": "AIR",
+      "diameter": 10
+    },
+    {
+      "radius": 155,
+      "thickness": 6,
+      "material": "N-BK7",
+      "diameter": 40
+    },
+    {
+      "radius": -155,
+      "thickness": 0,
+      "material": "AIR",
+      "diameter": 40
+    }
+  ],
+  "provenance": {
+    "scope": "Illustrative lens shapes, not a supplier-qualified prescription.",
+    "sourceAssumption": "2.5 mm collimated input after an unspecified first collimator; not a raw laser diode model."
+  }
+}
